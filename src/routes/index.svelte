@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+    export const prerender = true;
+</script>
+
 <script lang="ts">
     import autosaver from "$lib/index";
     import Console from "./_console.svelte";

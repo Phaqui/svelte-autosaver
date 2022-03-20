@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="description" content="" />
+		<link rel="icon" href="./favicon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta http-equiv="content-security-policy" content="">
+	<link rel="stylesheet" href="/_app/assets/pages/index.svelte-3c4bcef6.css">
+	<link rel="modulepreload" href="/_app/start-5800aab9.js">
+	<link rel="modulepreload" href="/_app/chunks/vendor-bea40f14.js">
+	<link rel="modulepreload" href="/_app/layout.svelte-2ebea4f8.js">
+	<link rel="modulepreload" href="/_app/pages/index.svelte-cbc48f6e.js">
+	</head>
+	<body>
+		<div>
+
+
+<h1>Welcome to @phaqui/autosaver</h1>
+
+<p>Watch your text inputs and textareas, and trigger a function on inactivty,
+    or after a period of longer, continous activity.
+</p>
+
+<h2>Installing</h2>
+<div class="terminal svelte-1yhm4kn">npm i -D @phaqui/autosaver</div>
+
+<h2>Basic use</h2>
+
+<p>Instantiate the autosaver, specifying the function to call as the &#39;save_fn&#39;.
+    Also demonstrated here are setting custom times in milliseconds for when to
+    consider inactivity (save_after) and non-stop-activity (save_every). These
+    default to six 6 and 30 seconds, respectively.
+</p>
+
+<div class="example svelte-1yhm4kn"><div class="code svelte-1yhm4kn"><pre>&lt;script lang=&quot;ts&quot;&gt;
+    import autosaver from &quot;@phaqui/autosaver&quot;;
+
+    let text = &quot;&quot;;
+
+    <span class="green svelte-1yhm4kn">const autosaver_opts = {
+        save_fn: </span><span class="orange svelte-1yhm4kn">save</span><span class="green svelte-1yhm4kn">,
+        save_after: 1*1000,
+        save_every: 3*1000,
+    }</span>
+    <span class="green svelte-1yhm4kn">const { autosave, dirty, last_saved } = autosaver(autosaver_opts);</span>
+
+    <span class="orange svelte-1yhm4kn">async function save() {
+        console.log(&quot;saving now&quot;);
+
+        // Notice: return true to indicate that the save was successful,
+        // so the $dirty and $last_saved stores reflects that
+        return true;
+    }</span>
+&lt;/script&gt;
+
+&lt;p&gt;dirty? <span class="green svelte-1yhm4kn">{$dirty}</span>&lt;/p&gt;
+&lt;p&gt;last saved: <span class="green svelte-1yhm4kn">{$last_saved}</span>&lt;/p&gt;
+&lt;input bind:value={text} <span class="green svelte-1yhm4kn">use:autosave</span>&gt;
+        </pre></div>
+
+    <div class="output svelte-1yhm4kn"><div><p>Dirty? false</p>
+            <p>Last saved: Sun Mar 20 2022 22:10:07 GMT+0100 (Central European Standard Time)</p>
+            <input value=""></div>
+
+        <div class="console svelte-1yhm4kn"><main class="svelte-1b7l1jn">
+</main></div></div></div>
+
+<h2>Watch multiple elements at the same time</h2>
+
+<p>The action can be applied to multiple elements, and will track them all,
+    calling the save method when any of them are changed.
+</p>
+
+<div class="example svelte-1yhm4kn"><div class="code svelte-1yhm4kn"><pre>&lt;script lang=&quot;ts&quot;&gt;
+    import autosaver from &quot;@phaqui/autosaver&quot;;
+
+    let firstname = &quot;&quot;, lastname = &quot;&quot;;
+
+    const autosaver_opts = {
+        save_fn: save,
+        save_after: 1*1000,
+        save_every: 3*1000,
+    }
+    const { autosave, dirty } = autosaver(autosaver);
+
+    async function save() {
+        console.log(&quot;saving now&quot;);
+        return true;
+    }
+&lt;/script&gt;
+
+&lt;p&gt;dirty? {$dirty}&lt;/p&gt;
+&lt;p&gt;last saved: {$last_saved}&lt;/p&gt;
+&lt;input bind:value={firstname} use:autosave&gt;
+<span class="green svelte-1yhm4kn">&lt;input bind:value={lastname} use:autosave&gt;</span>
+        </pre></div>
+
+    <div class="output svelte-1yhm4kn"><div><p>Dirty? false</p>
+            <input value="">
+            <input value=""></div>
+
+        <div class="console svelte-1yhm4kn"><main class="svelte-1b7l1jn">
+</main></div></div></div>
+
+<h2>Which fields changed?</h2>
+
+<p>If the element has no &#39;name&#39; attribute, and no custom name is set in the
+    action params, the autosaver will not track which elements are dirty, and
+    just call the save_fn without any arguments.
+    <br>
+    <br>
+    However, if the element has a name attribute (or a &quot;name&quot; is given in the
+    params to the action, then save_fn will be called with a set containing
+    the names of the elements that was changed.
+    <br>Note: Passing the name in the action param will take presence over the
+    name set as an attribute, if both are found.
+</p>
+
+
+
+<div class="example svelte-1yhm4kn"><div class="code svelte-1yhm4kn"><pre>&lt;script lang=&quot;ts&quot;&gt;
+    import autosaver from &quot;@phaqui/autosaver&quot;;
+
+    let firstname = &quot;&quot;, lastname = &quot;&quot;;
+
+    const autosaver_opts = {
+        save_fn: save,
+        save_after: 1*1000,
+        save_every: 3*1000,
+    }
+    const { autosave, dirty } = autosaver(autosaver);
+
+    async function save(<span class="green svelte-1yhm4kn">dirty_fields: Set&lt;string&gt;</span>) {
+        console.log(&quot;saving now, <span class="green svelte-1yhm4kn">dirty fields:&quot;, dirty_fields</span>);
+        return true;
+    }
+&lt;/script&gt;
+
+&lt;p&gt;dirty? {$dirty}&lt;/p&gt;
+&lt;input <span class="green svelte-1yhm4kn">name=&quot;firstname&quot;</span> bind:value={firstname} use:autosave&gt;
+&lt;input <span class="green svelte-1yhm4kn">name=&quot;lastname&quot;</span> bind:value={lastname} use:autosave<span class="green svelte-1yhm4kn">={{ name: &quot;overridden-name&quot; }}</span>&gt;
+        </pre></div>
+
+    <div class="output svelte-1yhm4kn"><div><p>Dirty? false</p>
+            <input name="firstname" value="">
+            <input name="lastname" value=""></div>
+
+        <div class="console svelte-1yhm4kn"><main class="svelte-1b7l1jn">
+</main></div></div></div>
+
+
+<h2>Save manually</h2>
+
+<p>Whenever you need to issue a save manually, use the provided save_manually
+    function instead of calling your save_fn directly, so that the dirty- and
+    last_saved stores are updated.
+</p>
+
+<div class="example svelte-1yhm4kn"><div class="code svelte-1yhm4kn"><pre>
+&lt;script lang=&quot;ts&quot;&gt;
+    import autosaver from &quot;@phaqui/autosaver&quot;;
+
+    let firstname = &quot;&quot;, lastname = &quot;&quot;;
+
+    <span class="light-red svelte-1yhm4kn">// Notice: For this example, using default times
+    // (saves after 6s of inactivity, save every 30s of activity)</span>
+    const autosaver_opts = { save_fn: save };
+    const { autosave, dirty, <span class="orange svelte-1yhm4kn">save_manually</span> } = autosaver(autosaver);
+
+    async function save(dirty_fields: Set&lt;string&gt;) {
+        console.log(&quot;saving now, dirty fields:&quot;, dirty_fields);
+        return true;
+    }
+&lt;/script&gt;
+
+&lt;p&gt;dirty? {$dirty}&lt;/p&gt;
+&lt;input name=&quot;firstname&quot; bind:value={firstname} use:autosave&gt;
+&lt;input name=&quot;lastname&quot; bind:value={lastname} use:autosave={{ name: &quot;overridden-name&quot; }}&gt;
+<span class="green svelte-1yhm4kn">&lt;button on:click={</span><span class="orange svelte-1yhm4kn">save_manually</span><span class="green svelte-1yhm4kn">}&gt;save now&lt;/button&gt;</span>
+        </pre></div>
+
+    <div class="output svelte-1yhm4kn"><div><p>Dirty? false</p>
+            <input name="firstname" value="">
+            <input name="lastname" value="">
+            <button>Save now</button></div>
+
+        <div class="console svelte-1yhm4kn"><main class="svelte-1b7l1jn">
+</main></div></div>
+</div>
+
+
+		<script type="module" data-hydrate="1547g3x">
+		import { start } from "/_app/start-5800aab9.js";
+		start({
+			target: document.querySelector('[data-hydrate="1547g3x"]').parentNode,
+			paths: {"base":"","assets":""},
+			session: {},
+			route: true,
+			spa: false,
+			trailing_slash: "never",
+			hydrate: {
+				status: 200,
+				error: null,
+				nodes: [
+					import("/_app/layout.svelte-2ebea4f8.js"),
+						import("/_app/pages/index.svelte-cbc48f6e.js")
+				],
+				params: {},
+				routeId: ""
+			}
+		});
+	</script></div>
+	</body>
+</html>
