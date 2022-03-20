@@ -1,5 +1,4 @@
 <script lang="ts">
-
     let entries = [];
 
     export function log(...s: Array<string | Set<any>>) {
