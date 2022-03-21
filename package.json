@@ -3,7 +3,7 @@
   "author": "Anders Lorentsen <phaqui@gmail.com>",
   "description": "Svelte action to monitor input elements for inactivity",
   "license": "ISC",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "dev": "svelte-kit dev",
     "build": "svelte-kit build",

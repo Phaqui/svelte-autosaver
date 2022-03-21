@@ -5,8 +5,6 @@ or after a period of longer, continous activity.
 
 ## Installing
 
-If you're seeing this, you've probably already done this step. Congrats!
-
 ```bash
 npm i -D @phaqui/autosaver
 ```
@@ -15,7 +13,7 @@ npm i -D @phaqui/autosaver
 
 ## Documentation and demo
 
-See WEBSITE for documentation and demonstration about usage.
+See the (github pages site)[https://phaqui.github.io/svelte-autosaver] for documentation and demonstration of use.
 
 ## Basic use
 
@@ -36,5 +34,7 @@ Instantiate the autosaver, specifying the function to call as the 'save_fn'.
     }
 </script>
 
+<p>Dirty? {$dirty}</p>
+<p>Last saved: {$last_saved}</p>
 <input type="text" bind:value={text} use:autosave>
 ```
